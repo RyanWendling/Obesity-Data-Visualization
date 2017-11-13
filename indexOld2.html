@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Obesity Data</title>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+		
+		<style>
+		.a {
+			padding:100px;
+		}
+		.container1 {
+			position:relative;
+		}
+		.imgA1 {
+			position:absolute; top: 0px; left: 0px; z-index: -1; 
+		} 	 
+		.bar:hover {
+		  fill: orange;
+		}
+		.menus {
+			position: absolute; right: -80px;
+			//text-align:right;
+		}
+		</style>
+	</head>
+	
+	<!--SVG starts in upper left. add to Y value and we go down page -->
+	<body>
+	
+	<div class="a">
+
+		<div class="container1">
+
+			<img class="imgA1" src="familia-numerosa.jpg">
+			<div class="menus">
+				<h2> Mean obesity rates of young adults, by country (2013) </h2>	
+				<select id="CountryNames" onchange="changeVis()"></select>
+			</div>
+		
+			<script type="text/javascript">
+					
+				var entireMax = 0;
+				var entireMin = 1;
+				var cap = 0;
+				var color = d3.scale.quantize()
+					.range(colorbrewer.YlOrRd[9])
+					.domain([9,0]);
+				var color2 = d3.scale.quantize()
+					.range(colorbrewer.Greys[9])
+					.domain([9,0]);
+				//var exData = [40, 60, 75,15, 23];
+				var newData = [];
+				var allDataObjects = [];
+				
+				var bodySelection = d3.select("body");
+				
+				var svgSelection = bodySelection.append("svg")
+				.attr("width", 500).attr("height", 500);
+				
+				var sel = document.getElementById('CountryNames')
+				var opt = document.createElement('option');
+				opt.innerHTML = "default";
+				opt.value = "default";
+				sel.appendChild(opt);
+				
+				/* provides a parser and formatter for delimiter-separated values*/
+				d3.csv("IHME_GBD_2013_OBESITY_PREVALENCE_1990_2013_Y2014M10D08.csv", function(data) {
+					data.forEach(function(d) {
+					d.mean = +d.mean;
+					if (d.year == "2013" && d.metric == "obese"
+					 && d.age_group == "20 to 24 yrs" && d.sex_id == "3") {
+					 
+						//Save country name and mean to key value array, will loop through it later.
+						allDataObjects.push({country: d.location_name, val: d.mean});
+						
+						if (cap < 7) {
+							newData.push(d.mean);
+							var opt = document.createElement('option');
+							opt.innerHTML = d.location_name;
+							opt.value = d.location_name;
+							sel.appendChild(opt);
+							console.log(d);
+							if (d.mean > entireMax) {
+								entireMax = d.mean;
+							}
+							if (d.mean < entireMin) {
+								entireMin = d.mean;
+							}
+							cap++;
+						} else {
+							if (d.mean > entireMax) {
+								entireMax = d.mean;
+							}
+							if (d.mean < entireMin) {
+								entireMin = d.mean;
+							}
+						}
+					}
+					//d["land area"] = +d["land area"];
+				  });
+				  console.log(data[5].mean);
+				  console.log(data[6].mean);
+				  console.log(newData[3]);
+			
+			
+					/* Get our min and max values, with which we create a border for our
+					 visualization, along with our normalization logic. */
+					var maxy2 = getMaxOfArray(newData);
+					var miny2 = getMinOfArray(newData);
+					var maxy = entireMax;
+					var miny = entireMin;
+					var bigBack = maxy2 + maxy2*.50;
+					var smallBack = maxy2 + maxy2*.25;
+					var backSelection = [bigBack, smallBack];
+					
+					//sort our input data by size
+					newData.sort(function(a,b){ 
+						return a - b
+					})
+					newData.push(smallBack);
+					newData.push(bigBack);
+					//reverse the data
+					newData.reverse();
+					newData.toString();			
+					
+					//Normalize data
+					var scale = d3.scale.linear();
+					scale.domain([miny, maxy]);
+					scale.range([10, 60]);
+					
+					<!-- d often refers to our bound data -->
+					<!-- i often refers to the index/element in our selection -->			
+					
+					var circleSelection = svgSelection.selectAll("circle")
+					.data(newData).enter().append("circle");
+					
+					var circleAttr = circleSelection.attr("cx", 240)
+						.attr("cy", 220).attr("r", function (d) { 
+							return scale(d);
+						})
+						.attr("fill",function(d,i){return color(i);}).each(function (d, i) {
+							if (i == 1) {
+							  // put all your operations on the second element, e.g.
+							  d3.select(this).attr("fill", "#ffffff");    
+							}
+							if (i == 0) {
+								d3.select(this).attr("fill", "#000000");  
+							}						
+						}
+					);
+				});
+				
+				function getMaxOfArray(numArray) {
+				  return Math.max.apply(null, numArray);
+				}
+				
+				function getMinOfArray(numArray) {
+				  return Math.min.apply(null, numArray);
+				}
+				
+				function changeVis() {
+					var selected = document.getElementById("CountryNames");
+					if (selected.selectedIndex == "2") {
+						console.log("hi");
+					}
+					var yellow = d3.selectAll("circle")
+						.attr("fill",function(d,i){
+						
+							if (selected.value == "default") {
+								return color(i);
+							} else {
+								return color2(i);
+							}
+						})
+						.each(function (d, i) {
+							
+							if (i-1 == selected.selectedIndex && selected.value !== "default") {
+							  // put all your operations on the second element, e.g.
+							  d3.select(this).attr("fill", "#FF0000");    
+							}
+							else if (i == 1) {
+							  // put all your operations on the second element, e.g.
+							  d3.select(this).attr("fill", "#ffffff");    
+							}
+							else if (i == 0) {
+								d3.select(this).attr("fill", "#000000");  
+							}						
+						});
+				}
+			</script>
+
+		</div> <!-- end container1 -->		
+	</div> <!-- end a -->
+			
+	</body>
+</html>

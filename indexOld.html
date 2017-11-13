@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Obesity Data</title>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+		
+		<style>
+		.a {
+			padding:100px;
+		}
+		.container {
+			position:relative;
+		}
+		.imgA1 {
+			position:absolute; top: 0px; left: 0px; z-index: -1; 
+		} 	 
+		.bar:hover {
+		  fill: orange;
+		}
+		</style>
+	</head>
+	
+	<!--SVG starts in upper left. add to Y value and we go down page -->
+	<body>
+	
+	<div class="a">
+		<div class="container">
+
+		<img class="imgA1" src="familia-numerosa.jpg">
+    
+	
+		<script type="text/javascript">
+		 			
+			var cap = 0;
+			var color = d3.scale.quantize()
+				.range(colorbrewer.YlOrRd[9])
+				.domain([9,0]);
+			var exData = [40, 60, 75,15, 23];
+			var newData = [];
+			
+			/* provides a parser and formatter for delimiter-separated values*/
+			d3.csv("IHME_GBD_2013_OBESITY_PREVALENCE_1990_2013_Y2014M10D08.csv", function(data) {
+				data.forEach(function(d) {
+				d.mean = +d.mean;
+				if (cap < 7 && d.year == "2013" && d.metric == "obese"
+				 && d.age_group == "20 to 24 yrs" && d.sex_id == "3") {
+					newData.push(d.mean);
+					console.log(d);
+					cap++;
+				}
+				//d["land area"] = +d["land area"];
+			  });
+			  console.log(data[5].mean);
+			  console.log(data[6].mean);
+		
+			});
+			
+			console.log(newData[3]);
+			var bodySelection = d3.select("body");
+			
+			var svgSelection = bodySelection.append("svg")
+			.attr("width", 500).attr("height", 500);
+			
+			/* Get our min and max values, with which we create a border for our
+			 visualization, along with our normalization logic. */
+			var maxy = getMaxOfArray(exData);
+			var miny = getMinOfArray(exData);
+			var bigBack = maxy + maxy*.50;
+			var smallBack = maxy + maxy*.25;
+			var backSelection = [bigBack, smallBack];
+			
+			//sort our input data by size
+			exData.sort(function(a,b){ 
+				return a - b
+			})
+			exData.push(smallBack);
+			exData.push(bigBack);
+			//reverse the data
+			exData.reverse();
+			exData.toString();			
+			
+			//Normalize data
+			var scale = d3.scale.linear();
+			scale.domain([miny, maxy]);
+			scale.range([10, 50]);
+			
+			<!-- d often refers to our bound data -->
+			<!-- i often refers to the index/element in our selection -->			
+			
+			var circleSelection = svgSelection.selectAll("circle")
+			.data(exData).enter().append("circle");
+			
+			var circleAttr = circleSelection.attr("cx", 240)
+				.attr("cy", 220).attr("r", function (d) { 
+					return scale(d);
+				})
+				.attr("fill",function(d,i){return color(i);}).each(function (d, i) {
+					if (i == 1) {
+					  // put all your operations on the second element, e.g.
+					  d3.select(this).attr("fill", "#ffffff");    
+					}
+					if (i == 0) {
+						d3.select(this).attr("fill", "#000000");  
+					}						
+				}
+			);
+	
+			function getMaxOfArray(numArray) {
+			  return Math.max.apply(null, numArray);
+			}
+			
+			function getMinOfArray(numArray) {
+			  return Math.min.apply(null, numArray);
+			}
+		</script>	
+	</body>
+</html>
