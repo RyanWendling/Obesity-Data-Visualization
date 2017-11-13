@@ -160,14 +160,14 @@ function changeCont() {
 	//Normalize data
 	var scale = d3.scale.linear();
 	scale.domain([miny, maxy]);
-	scale.range([3, 65]);		
+	scale.range([7, 65]);		
 	
 	// Use D3 to create our visualization using our mean values as the Radii.
 	var circleSelection = svgSelection.selectAll("circle")
 		.data(newData).enter().append("circle");
 	
 	var circleAttr = circleSelection.attr("cx", 235)
-		.attr("cy", 223).attr("r", function (d) { 
+		.attr("cy", 221).attr("r", function (d) { 
 			return scale(d);
 		})
 		.attr("fill",function(d,i){return color(i);})
