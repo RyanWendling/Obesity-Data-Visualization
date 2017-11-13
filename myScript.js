@@ -2,7 +2,7 @@
 var entireMax = 0;
 var entireMin = 1;
 
-// color is used for the displayed country gradient, redder colors signify a higher obese mean value.
+// color is used for the displayed country gradient, a darker red color signifys a higher obese mean value.
 var color = d3.scale.quantize()
 	.range(colorbrewer.YlOrRd[9])
 	.domain([9,0]);
@@ -74,13 +74,13 @@ function changeVis() {
 		.each(function (d, i) {
 			
 			if (i-1 == selected.selectedIndex && selected.value !== "Default") {
-			  // put all your operations on the second element, e.g.
 			  d3.select(this).attr("fill", "#FF0000");    
 			}
+			// Used to maintain the black and white boarder of the visualization.
 			else if (i == 1) {
-			  // put all your operations on the second element, e.g.
 			  d3.select(this).attr("fill", "#ffffff");    
 			}
+			// Used to maintain the black and white boarder of the visualization.
 			else if (i == 0) {
 				d3.select(this).attr("fill", "#000000");  
 			}						
@@ -114,13 +114,13 @@ function changeCont() {
 	opt.value = "Default";
 	sel.appendChild(opt);
 	
-	//get a random subset of our object array, then sort it by mean, so we can perform our selector object with ease.
+	//Creates a random subset of our allDataObjects array. 
 	for (let i = 0; i < 8; i++) {
 		var item = allDataObjects[Math.floor(Math.random()*allDataObjects.length)];
 		randomObjectSubset.push(item);
 	}
   
-	//sort our array by mean value.
+	//sort our randomObjectSubset by mean value, so we can perform our select/drop-down logic with ease.
 	randomObjectSubset.sort(function(a,b){ 
 		return a.val - b.val
 	});
@@ -147,7 +147,7 @@ function changeCont() {
 	var smallBack = maxy2 + maxy2*.25;
 	var backSelection = [bigBack, smallBack];
 	
-	//sort our input data by size
+	//sort our newData array by size
 	newData.sort(function(a,b){ 
 		return a - b
 	});
@@ -172,10 +172,11 @@ function changeCont() {
 		})
 		.attr("fill",function(d,i){return color(i);})
 			.each(function (d, i) {
-			
+				// Used to create the black and white boarder of the visualization.
 				if (i == 1) {
 				  d3.select(this).attr("fill", "#ffffff");    
 				}
+				// Used to create the black and white boarder of the visualization.
 				if (i == 0) {
 					d3.select(this).attr("fill", "#000000");  
 				}						

@@ -1,10 +1,10 @@
-		.a {
+		.containerA {
 			padding:100px;
 		}
 		.container1 {
 			position:relative;
 		}
-		.imgA1 {
+		.personImage {
 			position:absolute; top: 0px; left: 0px; z-index: -1; 
 		} 	 
 		.menus {
