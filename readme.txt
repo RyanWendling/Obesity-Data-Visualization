@@ -1,6 +1,6 @@
 How to run application:
 
-1. Go to the url: https://obesity-visualization-rw.herokuapp.com/index.html
+1. Go to the url: https://obesity-visualization-rw.herokuapp.com/index.html . Wait about 5 seconds for the visualization to load.
 
 2. From there, the app will display the obesity rates from a random assortment of 8 different countries / regions. 
 
