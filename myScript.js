@@ -31,7 +31,7 @@ opt.value = "default";
 sel.appendChild(opt);
 
 // Saves data to the allDataObjects array if certain conditions are met.
-d3.csv("IHME_GBD_2013_OBESITY_PREVALENCE_1990_2013_Y2014M10D08.csv", function(data) {
+d3.csv("https://raw.githubusercontent.com/RyanWendling/Obesity-Data-Visualization/master/IHME_GBD_2013_OBESITY_PREVALENCE_1990_2013_Y2014M10D08.CSV", function(data) {
 	data.forEach(function(d) {
 		d.mean = +d.mean;
 	
